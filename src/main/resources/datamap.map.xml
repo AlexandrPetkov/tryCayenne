@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-map xmlns="http://cayenne.apache.org/schema/9/modelMap"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://cayenne.apache.org/schema/9/modelMap http://cayenne.apache.org/schema/9/modelMap.xsd"
+	 project-version="9">
+	<property name="defaultPackage" value="org.example.cayenne.persistent"/>
+	<db-entity name="Contact">
+		<db-attribute name="email" type="VARCHAR" isMandatory="true" length="255"/>
+		<db-attribute name="firstName" type="VARCHAR" isMandatory="true" length="255"/>
+		<db-attribute name="id" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="20"/>
+		<db-attribute name="lastName" type="VARCHAR" isMandatory="true" length="255"/>
+	</db-entity>
+	<db-entity name="Invoice">
+		<db-attribute name="amount" type="INTEGER" length="20"/>
+		<db-attribute name="contactId" type="BIGINT" isMandatory="true" length="20"/>
+		<db-attribute name="description" type="VARCHAR" length="255"/>
+		<db-attribute name="id" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="20"/>
+	</db-entity>
+	<db-entity name="Payment">
+		<db-attribute name="amount" type="INTEGER" length="20"/>
+		<db-attribute name="id" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="20"/>
+		<db-attribute name="invoiceId" type="BIGINT" isMandatory="true" length="20"/>
+	</db-entity>
+	<obj-entity name="Contact" className="org.example.cayenne.persistent.Contact" dbEntityName="Contact">
+		<obj-attribute name="email" type="java.lang.String" db-attribute-path="email"/>
+		<obj-attribute name="lastName" type="java.lang.String" db-attribute-path="lastName"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="firstName"/>
+	</obj-entity>
+	<obj-entity name="Invoice" className="org.example.cayenne.persistent.Invoice" dbEntityName="Invoice">
+		<obj-attribute name="amount" type="int" db-attribute-path="amount"/>
+		<obj-attribute name="description" type="java.lang.String" db-attribute-path="description"/>
+	</obj-entity>
+	<obj-entity name="Payment" className="org.example.cayenne.persistent.Payment" dbEntityName="Payment">
+		<obj-attribute name="amount" type="int" db-attribute-path="amount"/>
+	</obj-entity>
+	<db-relationship name="invoices" source="Contact" target="Invoice" toMany="true">
+		<db-attribute-pair source="id" target="contactId"/>
+	</db-relationship>
+	<db-relationship name="contact" source="Invoice" target="Contact" toMany="false">
+		<db-attribute-pair source="contactId" target="id"/>
+	</db-relationship>
+	<db-relationship name="payments" source="Invoice" target="Payment" toMany="true">
+		<db-attribute-pair source="id" target="invoiceId"/>
+	</db-relationship>
+	<db-relationship name="invoice" source="Payment" target="Invoice" toMany="false">
+		<db-attribute-pair source="invoiceId" target="id"/>
+	</db-relationship>
+	<obj-relationship name="invoices" source="Contact" target="Invoice" deleteRule="Deny" db-relationship-path="invoices"/>
+	<obj-relationship name="contact" source="Invoice" target="Contact" db-relationship-path="contact"/>
+	<obj-relationship name="payments" source="Invoice" target="Payment" deleteRule="Cascade" db-relationship-path="payments"/>
+	<obj-relationship name="invoice" source="Payment" target="Invoice" deleteRule="Deny" db-relationship-path="invoice"/>
+</data-map>
