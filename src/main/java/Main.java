@@ -27,7 +27,7 @@ public class Main {
         //saving created objects in DB
         context.commitChanges();
 
-        System.out.println("Contact name\t\t\tEmail\t\t\t\t\tActual Debt\tSummary Payed");
+        System.out.println("Contact name\t\t\tEmail\t\t\t\t\tActual Debt\t\tSummary Payed");
         for (Contact contact : contacts){
             System.out.println(contact);
         }
