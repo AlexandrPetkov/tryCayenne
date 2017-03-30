@@ -54,6 +54,6 @@ public class Contact extends _Contact {
         refreshSummaryPayed();
         refreshSummaryDebt();
 
-        return String.format("%s %s\t%s\t%d\t%d", getName(), getLastName(), getEmail(), getSummaryDebt(), getSummaryPayed());
+        return String.format("%-10s %-10s\t%-25s\t%-11d\t%-13d", getName(), getLastName(), getEmail(), getSummaryDebt(), getSummaryPayed());
     }
 }
