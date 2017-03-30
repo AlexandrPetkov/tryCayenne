@@ -1,9 +1,9 @@
-package objectManipulator;
+package object.manipulator;
 
 import org.example.cayenne.persistent.Contact;
 import org.example.cayenne.persistent.Invoice;
 import org.example.cayenne.persistent.Payment;
-import randomGenerator.MyRandomGenerator;
+import ap.cayenne.learning.functions.lang.APRandomFunctions;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -49,7 +49,7 @@ public class MyObjectManipulator {
 
     public static Invoice setInvoiceWithRandomValues (Invoice invoice){
 
-        invoice.setDescription(MyRandomGenerator.generateRandomString(20, 255));
+        invoice.setDescription(APRandomFunctions.generateRandomString(20, 255));
         invoice.setAmount((int)(Math.random() * 500));
 
         return invoice;
@@ -57,9 +57,9 @@ public class MyObjectManipulator {
 
     public static Contact setContactWithRandomValues (Contact contact){
 
-        contact.setName(MyRandomGenerator.generateRandomString(5, 10));
-        contact.setLastName(MyRandomGenerator.generateRandomString(5, 10));
-        contact.setEmail(MyRandomGenerator.generateRandomString(5, 10) + "@gmail.com");
+        contact.setName(APRandomFunctions.generateRandomString(5, 10));
+        contact.setLastName(APRandomFunctions.generateRandomString(5, 10));
+        contact.setEmail(APRandomFunctions.generateRandomString(5, 10) + "@gmail.com");
 
         return contact;
     }

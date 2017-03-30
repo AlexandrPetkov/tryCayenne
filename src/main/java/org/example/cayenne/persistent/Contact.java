@@ -8,6 +8,32 @@ public class Contact extends _Contact {
     private int summaryDebt;
     private int summaryPayed;
 
+
+  /*  public void validateForInsert(ValidationResult validationResult){
+
+
+
+        validationResult.addFailure(new ValidationFailure() {
+            @Override
+            public Object getSource() {
+                return null;
+            }
+
+            @Override
+            public Object getError() {
+                return null;
+            }
+
+            @Override
+            public String getDescription() {
+                return null;
+            }
+        });
+        System.out.println(validationResult);
+    }
+*/
+
+
     public int getSummaryDebt() {
         return summaryDebt;
     }

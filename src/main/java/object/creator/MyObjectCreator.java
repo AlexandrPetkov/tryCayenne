@@ -1,10 +1,10 @@
-package objectCreator;
+package object.creator;
 
 import org.apache.cayenne.ObjectContext;
 import org.example.cayenne.persistent.Contact;
 import org.example.cayenne.persistent.Invoice;
 import org.example.cayenne.persistent.Payment;
-import randomGenerator.MyRandomGenerator;
+import ap.cayenne.learning.functions.lang.APRandomFunctions;
 
 public class MyObjectCreator {
     /*
@@ -58,7 +58,7 @@ public class MyObjectCreator {
         Invoice invoice = context.newObject(Invoice.class);
 
         invoice.setContact(contact);
-        invoice.setDescription(MyRandomGenerator.generateRandomString(20, 255));
+        invoice.setDescription(APRandomFunctions.generateRandomString(20, 255));
         invoice.setAmount((int)Math.random() * 500);
         return invoice;
     }

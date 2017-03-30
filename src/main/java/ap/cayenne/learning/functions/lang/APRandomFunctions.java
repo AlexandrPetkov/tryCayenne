@@ -1,8 +1,8 @@
-package randomGenerator;
+package ap.cayenne.learning.functions.lang;
 
 import org.apache.commons.lang.RandomStringUtils;
 
-public class MyRandomGenerator {
+public class APRandomFunctions {
 
     /*
      * Generates random character sequence as a string in specified diapason

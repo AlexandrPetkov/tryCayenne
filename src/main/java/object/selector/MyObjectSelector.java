@@ -1,4 +1,4 @@
-package objectSelector;
+package object.selector;
 
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;

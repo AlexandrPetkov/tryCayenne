@@ -14,14 +14,17 @@ public class Invoice extends _Invoice {
         return debt;
     }
 
+    public void setDebt(int debt) {
+        this.debt = debt;
+    }
+
     public int getSummaryPaymentsAmount() {
         return summaryPaymentsAmount;
     }
 
-    public int calculatePaymentsSum(){
+    public static int calculatePaymentsSum(List<Payment> payments){
 
         int sum = 0;
-        List<Payment> payments = this.getPayments();
 
         for (Payment i : payments){
             sum += i.getAmount();
@@ -31,7 +34,7 @@ public class Invoice extends _Invoice {
     }
 
     public void refreshSummaryPaymentsAmount(){
-        summaryPaymentsAmount = calculatePaymentsSum();
+        summaryPaymentsAmount = calculatePaymentsSum(getPayments());
     }
 
     public void refreshDebt(){

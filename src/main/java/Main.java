@@ -1,6 +1,6 @@
-import objectCreator.MyObjectCreator;
-import objectManipulator.MyObjectManipulator;
-import objectSelector.MyObjectSelector;
+import object.creator.MyObjectCreator;
+import object.manipulator.MyObjectManipulator;
+import object.selector.MyObjectSelector;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.example.cayenne.persistent.Contact;
@@ -16,6 +16,7 @@ public class Main {
         ServerRuntime testRuntime = ServerRuntime.builder()
                 .addConfig("cayenne-CayenneModelerTest.xml").build();
         ObjectContext context = testRuntime.newContext();
+
 
         /*//creating and filling out DB with objects
         MyObjectCreator.createRandomContactObjects(context, 5);
