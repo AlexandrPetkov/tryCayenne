@@ -11,7 +11,7 @@ import java.util.List;
 
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         //getting context
         ServerRuntime testRuntime = ServerRuntime.builder()
                 .addConfig("cayenne-CayenneModelerTest.xml").build();
@@ -27,11 +27,13 @@ public class Main {
         //saving created objects in DB
         context.commitChanges();
 
+        contacts = MyObjectManipulator.calculateDebtsAndPays(contacts);
+        contacts = MyObjectManipulator.sortContactsByDebt(contacts, true);
+
         System.out.println("Contact name\t\t\tEmail\t\t\t\t\tActual Debt\t\tSummary Payed");
         for (Contact contact : contacts){
             System.out.println(contact);
         }
-
     }
 
     /**

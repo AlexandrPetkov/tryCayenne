@@ -51,8 +51,6 @@ public class Contact extends _Contact {
 
     @Override
     public String toString() {
-        refreshSummaryPayed();
-        refreshSummaryDebt();
 
         return String.format("%-21s\t%-20s\t%-14d\t%-13d", getName() + " "
                 + getLastName(), getEmail(), getSummaryDebt(), getSummaryPayed());
