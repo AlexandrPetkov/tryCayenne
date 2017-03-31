@@ -45,8 +45,8 @@
 	<db-relationship name="invoice" source="Payment" target="Invoice" toMany="false">
 		<db-attribute-pair source="invoiceId" target="id"/>
 	</db-relationship>
-	<obj-relationship name="invoices" source="Contact" target="Invoice" deleteRule="Deny" db-relationship-path="invoices"/>
-	<obj-relationship name="contact" source="Invoice" target="Contact" db-relationship-path="contact"/>
+	<obj-relationship name="invoices" source="Contact" target="Invoice" deleteRule="Cascade" db-relationship-path="invoices"/>
+	<obj-relationship name="contact" source="Invoice" target="Contact" deleteRule="Cascade" db-relationship-path="contact"/>
 	<obj-relationship name="payments" source="Invoice" target="Payment" deleteRule="Cascade" db-relationship-path="payments"/>
 	<obj-relationship name="invoice" source="Payment" target="Invoice" deleteRule="Deny" db-relationship-path="invoice"/>
 </data-map>

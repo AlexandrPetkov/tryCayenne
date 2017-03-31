@@ -7,6 +7,14 @@ public class Payment extends _Payment {
 
     private static final long serialVersionUID = 1L;
 
+    public Payment(){
+        super();
+    }
+
+    public Payment(int amount){
+        super();
+        this.setAmount(amount);
+    }
     @Override
     public void validateForInsert(ValidationResult validationResult) {
 

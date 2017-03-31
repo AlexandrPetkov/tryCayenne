@@ -6,6 +6,8 @@ import org.example.cayenne.persistent.Invoice;
 import org.example.cayenne.persistent.Payment;
 import ap.cayenne.learning.functions.lang.APRandomFunctions;
 
+import java.util.List;
+
 public class MyObjectCreator {
     /*
     * Creates "Contact" objects and calls method of creation 5 "Invoice" objects to every "Contact"
@@ -51,6 +53,7 @@ public class MyObjectCreator {
             Invoice invoice = createInvoice(context, contact);
 
             createRandomPaymentObjects(context, invoice, 5);
+
         }
     }
 

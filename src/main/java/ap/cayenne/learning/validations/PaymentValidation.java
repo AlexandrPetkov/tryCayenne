@@ -5,6 +5,6 @@ import org.example.cayenne.persistent.Invoice;
 public class PaymentValidation {
 
     public static boolean isPaymentsValid (Invoice invoice){
-        return invoice.getDebt() < 0;
+        return invoice.getDebt() >= 0;
     }
 }

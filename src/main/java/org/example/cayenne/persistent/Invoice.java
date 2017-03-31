@@ -1,5 +1,7 @@
 package org.example.cayenne.persistent;
 
+import org.apache.cayenne.validation.BeanValidationFailure;
+import org.apache.cayenne.validation.ValidationResult;
 import org.example.cayenne.persistent.auto._Invoice;
 
 import java.util.List;
@@ -42,4 +44,14 @@ public class Invoice extends _Invoice {
         debt = getAmount() - summaryPaymentsAmount;
     }
 
+    @Override
+    public void validateForInsert(ValidationResult validationResult) {
+        getAmount();
+        getPayments();
+        if (true) {
+            validationResult.addFailure(new BeanValidationFailure(this, AMOUNT.getName(), "Incorect amount"));
+        }
+        super.validateForInsert(validationResult);
+
+    }
 }
