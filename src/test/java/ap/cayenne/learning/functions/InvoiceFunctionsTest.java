@@ -46,10 +46,17 @@ public class InvoiceFunctionsTest {
         Invoice actual = createInvoice();
 
         context.commitChanges();
-        //getting invoice from DB by id
-        Invoice expected = SelectById.query(Invoice.class, actual.getObjectId()).selectOne(context);
 
-        Assert.assertEquals(expected, actual);
+        actual = context.localObject(actual);
+
+        ObjectContext newContext = ServerRuntime.builder()
+                .addConfig("cayenne-CayenneModelerTest.xml").build().newContext();
+
+        Invoice expected = SelectById.query(Invoice.class, actual.getObjectId()).selectOne(newContext);
+
+        Assert.assertEquals(expected.getDescription(), actual.getDescription());
+        Assert.assertEquals(expected.getAmount(), actual.getAmount());
+
     }
 
 
@@ -58,8 +65,11 @@ public class InvoiceFunctionsTest {
         //getting invoice
         Invoice invoice = createInvoice();
 
+        //adding payments to invoice with summary amount LESS than invoice amount
         addPaymentsToInvoice(invoice, context, 249);
         context.commitChanges();
+
+
 
         Invoice expected = SelectById.query(Invoice.class, invoice.getObjectId()).selectOne(context);
 
@@ -71,9 +81,10 @@ public class InvoiceFunctionsTest {
 
         Invoice invoice = createInvoice();
 
+        //adding payments to invoice with summary amount GREATER than invoice amount
         addPaymentsToInvoice(invoice, context, 251);
 
-        //adding payments to invoice with summary amount greater than invoice amount
+
         context.commitChanges();
     }
 
