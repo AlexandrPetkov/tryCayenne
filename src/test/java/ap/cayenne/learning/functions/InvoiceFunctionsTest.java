@@ -1,125 +1,105 @@
 package ap.cayenne.learning.functions;
 
 import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.Persistent;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.query.SelectById;
 import org.apache.cayenne.validation.ValidationException;
 import org.example.cayenne.persistent.Contact;
 import org.example.cayenne.persistent.Invoice;
 import org.example.cayenne.persistent.Payment;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class InvoiceFunctionsTest {
-    static ObjectContext context = ServerRuntime.builder()
-            .addConfig("cayenne-CayenneModelerTest.xml").build().newContext();
-    static List<Object> objects = new ArrayList<>();
+    private ObjectContext context;
+    private List<Persistent> objects = new ArrayList<>();
+    private List<Payment> payments = new ArrayList<>();
+    private Contact contact;
 
-    @AfterClass
-    public static void clearDB(){
+    @Before
+    public void before(){
+        context = ServerRuntime.builder()
+                .addConfig("cayenne-CayenneModelerTest.xml").build().newContext();
+
+        //we cant commit invoice without any contact related
+        contact = context.newObject(Contact.class);
+
+        //contact must contain some data
+        contact.setEmail("gmail");
+        contact.setName("name");
+        contact.setLastName("lastname");
+
+        //its for delete contact from DB after test
+
+        context.commitChanges();
+        objects.add(contact);
+
+    }
+
+    @After
+    public void clearDB(){
         context.deleteObjects(objects);
         context.commitChanges();
     }
 
     @Test
-    public void createInvoice (){
-        Invoice actual = new Invoice();
+    public void testCreateInvoice (){
 
-        //we cant commit invoice without any contact related
-        Contact contact = new Contact();
-
-        //its for delete contact from DB after test
-        objects.add(contact);
-
-        //contact must contain some data
-        context.registerNewObject(contact);
-        contact.setEmail("gmail");
-        contact.setName("name");
-        contact.setLastName("lastname");
-
-        //filling our test invoice
-        actual.setAmount(500);
-        actual.setContact(contact);
-        actual.setDescription("Some description");
+        Invoice actual = createInvoice();
 
         context.commitChanges();
-
         //getting invoice from DB by id
         Invoice expected = SelectById.query(Invoice.class, actual.getObjectId()).selectOne(context);
 
         Assert.assertEquals(expected, actual);
     }
 
-    @Test
-    public void setOnInsertValidation(){
-        Invoice actual = new Invoice();
-
-        //we cant commit invoice without any contact related
-        Contact contact = new Contact();
-
-        //its to delete contact from DB after test
-        objects.add(contact);
-
-        //contact must contain some data
-        context.registerNewObject(contact);
-        contact.setEmail("12711");
-        contact.setName("name");
-        contact.setLastName("lastname");
+    private Invoice createInvoice() {
+        Invoice actual = context.newObject(Invoice.class);
 
         //filling our test invoice
         actual.setAmount(500);
         actual.setContact(contact);
         actual.setDescription("Some description");
 
+        //getting invoice
+        return actual;
+    }
+
+    @Test
+    public void setOnInsertValidation(){
+        //getting invoice
+        Invoice invoice = createInvoice();
+
+        //adding payments to invoice with summary amount LESS than invoice amount
         for (int i = 0; i < 2; i++) {
             Payment payment = context.newObject(Payment.class);
             payment.setAmount(249);
-            payment.setInvoice(actual);
+            payment.setInvoice(invoice);
+            payments.add(payment);
         }
         context.commitChanges();
 
-        Invoice expected = SelectById.query(Invoice.class, actual.getObjectId()).selectOne(context);
+        Invoice expected = SelectById.query(Invoice.class, invoice.getObjectId()).selectOne(context);
 
-        Assert.assertEquals(expected, actual);
-    }
-
-    @After
-    public void clearContact(){
-        context.deleteObjects(objects);
-        context.commitChanges();
+        Assert.assertEquals(expected, invoice);
     }
 
     @Test(expected = ValidationException.class)
     public void setOnInsertValidationException(){
-        Invoice actual = new Invoice();
 
-        //we cant commit invoice without any contact related
-        Contact contact = new Contact();
+        Invoice invoice = createInvoice();
 
-        //its to delete contact from DB after test
-        objects.add(contact);
-
-        //contact must contain some data
-        context.registerNewObject(contact);
-        contact.setEmail("1281");
-        contact.setName("name");
-        contact.setLastName("lastname");
-
-        //filling our test invoice
-        actual.setAmount(500);
-        actual.setContact(contact);
-        actual.setDescription("Some description");
-
+        //adding payments to invoice with summary amount greater than invoice amount
         for (int i = 0; i < 2; i++) {
             Payment payment = context.newObject(Payment.class);
             payment.setAmount(251);
-            payment.setInvoice(actual);
+            payment.setInvoice(invoice);
+            payments.add(payment);
         }
         context.commitChanges();
     }
