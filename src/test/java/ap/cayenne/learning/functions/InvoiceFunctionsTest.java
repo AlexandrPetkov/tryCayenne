@@ -12,7 +12,7 @@ import org.junit.*;
 
 
 public class InvoiceFunctionsTest {
-    ServerRuntime runtime;
+    private ServerRuntime runtime;
     private ObjectContext context;
     private Contact contact;
 
@@ -70,7 +70,7 @@ public class InvoiceFunctionsTest {
 
     @Test(expected = ValidationException.class)
     public void setOnInsertValidationException(){
-        Invoice invoice = createInvoice(context, 500, contact);
+        Invoice invoice = createInvoice(context, 499, contact);
 
         //adding payments to invoice with summary amount GREATER than invoice amount
         addPaymentsToInvoice(invoice, context, 251);

@@ -7,8 +7,7 @@ public class InvoiceFunctions {
 
     public static Invoice createInvoice (ObjectContext context, int amount){
 
-        Invoice invoice = createInvoice(context, amount, null);
-        return invoice;
+        return createInvoice(context, amount, null);
     }
 
     public static Invoice createInvoice (ObjectContext context, int amount, String description){

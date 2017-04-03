@@ -4,8 +4,6 @@ import org.apache.cayenne.validation.BeanValidationFailure;
 import org.apache.cayenne.validation.ValidationResult;
 import org.example.cayenne.persistent.auto._Payment;
 
-import java.util.List;
-
 public class Payment extends _Payment {
 
     private static final long serialVersionUID = 1L;

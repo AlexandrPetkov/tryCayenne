@@ -18,7 +18,7 @@ public class PaymentFunctionsTest {
     private ServerRuntime runtime;
     private ObjectContext context;
     private List<Persistent> objects;
-    Invoice invoice;
+    private Invoice invoice;
 
     @Before
     public void before(){
@@ -29,7 +29,7 @@ public class PaymentFunctionsTest {
         Contact contact = ContactFunctions.createContact("testName", "testLastName", "test@gmail.com", context);
         objects.add(contact);
 
-        invoice = InvoiceFunctions.createInvoice(context, 500);
+        invoice = InvoiceFunctions.createInvoice(context, 600);
         invoice.setContact(contact);
         objects.add(invoice);
 
