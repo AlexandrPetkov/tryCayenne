@@ -1,7 +1,7 @@
 package ap.cayenne.learning.functions;
 
 import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.Persistent;
+
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.query.SelectById;
 import org.apache.cayenne.validation.ValidationException;
@@ -10,14 +10,9 @@ import org.example.cayenne.persistent.Invoice;
 import org.example.cayenne.persistent.Payment;
 import org.junit.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class InvoiceFunctionsTest {
     private ObjectContext context;
-    private List<Persistent> objects = new ArrayList<>();
-    private List<Payment> payments = new ArrayList<>();
     private Contact contact;
 
     @Before
@@ -36,13 +31,12 @@ public class InvoiceFunctionsTest {
         //its for delete contact from DB after test
 
         context.commitChanges();
-        objects.add(contact);
 
     }
 
     @After
     public void clearDB(){
-        context.deleteObjects(objects);
+        context.deleteObject(contact);
         context.commitChanges();
     }
 
@@ -58,30 +52,13 @@ public class InvoiceFunctionsTest {
         Assert.assertEquals(expected, actual);
     }
 
-    private Invoice createInvoice() {
-        Invoice actual = context.newObject(Invoice.class);
-
-        //filling our test invoice
-        actual.setAmount(500);
-        actual.setContact(contact);
-        actual.setDescription("Some description");
-
-        //getting invoice
-        return actual;
-    }
 
     @Test
     public void setOnInsertValidation(){
         //getting invoice
         Invoice invoice = createInvoice();
 
-        //adding payments to invoice with summary amount LESS than invoice amount
-        for (int i = 0; i < 2; i++) {
-            Payment payment = context.newObject(Payment.class);
-            payment.setAmount(249);
-            payment.setInvoice(invoice);
-            payments.add(payment);
-        }
+        addPaymentsToInvoice(invoice, context, 249);
         context.commitChanges();
 
         Invoice expected = SelectById.query(Invoice.class, invoice.getObjectId()).selectOne(context);
@@ -94,13 +71,40 @@ public class InvoiceFunctionsTest {
 
         Invoice invoice = createInvoice();
 
+        addPaymentsToInvoice(invoice, context, 251);
+
         //adding payments to invoice with summary amount greater than invoice amount
+        context.commitChanges();
+    }
+
+    /*
+     * creates and returns new invoice
+     * sets the amount of new invoice with 500
+     * adds new invoice to the "contact" variable
+     */
+    private Invoice createInvoice() {
+        Invoice actual = context.newObject(Invoice.class);
+
+        //filling our test invoice
+        actual.setAmount(500);
+        actual.setContact(contact);
+
+        //getting invoice
+        return actual;
+    }
+
+    /*
+     * creating 2 payments and setting them to an invoice
+     *
+     * int paymentAmount - amount that will be set to every created payment
+     * Invoice invoice - created payments will be set to that invoice
+     * ObjectContext context - its the context to put payments
+     */
+    private void addPaymentsToInvoice (Invoice invoice, ObjectContext context, int paymentAmount){
         for (int i = 0; i < 2; i++) {
             Payment payment = context.newObject(Payment.class);
-            payment.setAmount(251);
+            payment.setAmount(paymentAmount);
             payment.setInvoice(invoice);
-            payments.add(payment);
         }
-        context.commitChanges();
     }
 }
