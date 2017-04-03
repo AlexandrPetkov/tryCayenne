@@ -1,23 +1,27 @@
-package ap.cayenne.learning.functions;
+package ap.cayenne.learning.validations;
 
+import ap.cayenne.learning.functions.ContactFunctions;
+import ap.cayenne.learning.functions.InvoiceFunctions;
+import ap.cayenne.learning.functions.PaymentFunctions;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.Persistent;
 import org.apache.cayenne.configuration.server.ServerRuntime;
-import org.apache.cayenne.query.SelectById;
+import org.apache.cayenne.validation.ValidationException;
 import org.example.cayenne.persistent.Contact;
 import org.example.cayenne.persistent.Invoice;
 import org.example.cayenne.persistent.Payment;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PaymentFunctionsTest {
-    private ServerRuntime runtime;
-    private ObjectContext context;
-    private List<Persistent> objects;
+public class InvoiceAmountValidationTest {
+
+    ServerRuntime runtime;
+    ObjectContext context;
+    List<Persistent> objects;
+    Contact contact;
     Invoice invoice;
 
     @Before
@@ -26,14 +30,13 @@ public class PaymentFunctionsTest {
         context = runtime.newContext();
         objects = new ArrayList<>();
 
-        Contact contact = ContactFunctions.createContact("testName", "testLastName", "test@gmail.com", context);
+        contact = ContactFunctions.createContact("name", "surname", "mail", context);
         objects.add(contact);
-
         invoice = InvoiceFunctions.createInvoice(context, 500);
         invoice.setContact(contact);
         objects.add(invoice);
-
         context.commitChanges();
+
     }
 
     @After
@@ -42,22 +45,22 @@ public class PaymentFunctionsTest {
         context.commitChanges();
     }
 
-    @Test
-    public void testCreatePayment(){
-        Payment payment = context.newObject(Payment.class);
-        payment.setInvoice(invoice);
-        objects.add(payment);
-
-
+    @Test(expected = ValidationException.class)
+    public void onSaveValidationException(){
+        createPayments(6);
         context.commitChanges();
+    }
 
-        ObjectContext newContext = runtime.newContext();
-        Payment expected = SelectById.query(Payment.class, payment.getObjectId()).selectOne(newContext);
+    private List<Payment> createPayments (int quantity){
+        List<Payment> payments = new ArrayList<>();
 
-        if (expected == null){
-            Assert.fail();
-        } else {
-            Assert.assertEquals(expected.getObjectId(), payment.getObjectId());
+        for (int i = 0; i < quantity; i++) {
+            Payment payment = PaymentFunctions.createPayment(100, context);
+            payment.setInvoice(invoice);
+            objects.add(payment);
+            payments.add(payment);
         }
+
+        return payments;
     }
 }

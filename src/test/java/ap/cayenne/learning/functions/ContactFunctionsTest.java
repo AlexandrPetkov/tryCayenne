@@ -12,14 +12,12 @@ import java.util.List;
 public class ContactFunctionsTest {
     private ServerRuntime testRuntime;
     private ObjectContext context;
-
     private List<Contact> creates = new LinkedList<>();
 
     @Before
     public void before() {
         testRuntime = ServerRuntime.builder()
                 .addConfig("cayenne-CayenneModelerTest.xml").build();
-
         context = testRuntime.newContext();
     }
 
@@ -27,17 +25,21 @@ public class ContactFunctionsTest {
     public void after() {
 
         context.deleteObjects(creates);
+        context.commitChanges();
 
     }
 
-    @Ignore
     @Test()
-    public void test1() {
+    public void testCreateContact() {
         Contact contact = ContactFunctions.createContact("Name", "LastName", "Email", context);
         creates.add(contact);
+        context.commitChanges();
 
         Contact actual = SelectById.query(Contact.class, contact.getObjectId()).selectOne(testRuntime.newContext());
-        Assert.assertEquals(contact.getObjectId(), actual.getObjectId());
+
+        if (actual != null) {
+            Assert.assertEquals(contact.getObjectId(), actual.getObjectId());
+        } else Assert.fail();
     }
 
 }

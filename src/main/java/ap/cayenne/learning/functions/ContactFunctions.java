@@ -10,7 +10,6 @@ public class ContactFunctions {
         contact.setLastName(lastName);
         contact.setEmail(email);
 
-        context.commitChanges();
         return contact;
     }
 }

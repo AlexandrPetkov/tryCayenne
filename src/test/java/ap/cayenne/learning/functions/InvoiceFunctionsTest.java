@@ -12,23 +12,18 @@ import org.junit.*;
 
 
 public class InvoiceFunctionsTest {
+    ServerRuntime runtime;
     private ObjectContext context;
     private Contact contact;
 
     @Before
     public void before(){
-        context = ServerRuntime.builder()
-                .addConfig("cayenne-CayenneModelerTest.xml").build().newContext();
+        runtime = ServerRuntime.builder()
+                .addConfig("cayenne-CayenneModelerTest.xml").build();
+        context = runtime.newContext();
 
         //we cant commit invoice without any contact related
-        contact = context.newObject(Contact.class);
-
-        //contact must contain some data
-        contact.setEmail("gmail");
-        contact.setName("name");
-        contact.setLastName("lastname");
-
-        //its for delete contact from DB after test
+        contact = ContactFunctions.createContact("name", "lastName", "gmail", context);
 
         context.commitChanges();
 
@@ -43,48 +38,42 @@ public class InvoiceFunctionsTest {
     @Test
     public void testCreateInvoice (){
 
-        Invoice actual = createInvoice();
-
+        Invoice actual = createInvoice(context, 500, contact);
         context.commitChanges();
 
-        actual = context.localObject(actual);
-
-        ObjectContext newContext = ServerRuntime.builder()
-                .addConfig("cayenne-CayenneModelerTest.xml").build().newContext();
-
+        ObjectContext newContext = runtime.newContext();
         Invoice expected = SelectById.query(Invoice.class, actual.getObjectId()).selectOne(newContext);
 
-        Assert.assertEquals(expected.getDescription(), actual.getDescription());
-        Assert.assertEquals(expected.getAmount(), actual.getAmount());
+        if (expected != null){
+            Assert.assertEquals(expected.getObjectId(), actual.getObjectId());
+        } else Assert.fail();
 
+        newContext.deleteObject(expected);
+        newContext.commitChanges();
     }
 
 
     @Test
     public void setOnInsertValidation(){
         //getting invoice
-        Invoice invoice = createInvoice();
+        Invoice invoice = createInvoice(context, 500, contact);
 
         //adding payments to invoice with summary amount LESS than invoice amount
         addPaymentsToInvoice(invoice, context, 249);
         context.commitChanges();
 
-
+            //how to check???
 
         Invoice expected = SelectById.query(Invoice.class, invoice.getObjectId()).selectOne(context);
-
         Assert.assertEquals(expected, invoice);
     }
 
     @Test(expected = ValidationException.class)
     public void setOnInsertValidationException(){
-
-        Invoice invoice = createInvoice();
+        Invoice invoice = createInvoice(context, 500, contact);
 
         //adding payments to invoice with summary amount GREATER than invoice amount
         addPaymentsToInvoice(invoice, context, 251);
-
-
         context.commitChanges();
     }
 
@@ -93,11 +82,11 @@ public class InvoiceFunctionsTest {
      * sets the amount of new invoice with 500
      * adds new invoice to the "contact" variable
      */
-    private Invoice createInvoice() {
+    private Invoice createInvoice(ObjectContext context, int amount, Contact contact) {
         Invoice actual = context.newObject(Invoice.class);
 
         //filling our test invoice
-        actual.setAmount(500);
+        actual.setAmount(amount);
         actual.setContact(contact);
 
         //getting invoice
