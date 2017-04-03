@@ -9,48 +9,22 @@ import java.util.List;
 public class Invoice extends _Invoice {
 
     private static final long serialVersionUID = 1L;
-    private int debt;
-    private int summaryPaymentsAmount;
 
-    public int getDebt() {
-        return debt;
-    }
-
-    public void setDebt(int debt) {
-        this.debt = debt;
-    }
-
-    public int getSummaryPaymentsAmount() {
-        return summaryPaymentsAmount;
-    }
-
-    public static int calculatePaymentsSum(List<Payment> payments){
-
-        int sum = 0;
-
-        for (Payment i : payments){
-            sum += i.getAmount();
-        }
-
-        return sum;
-    }
-
-    public void refreshSummaryPaymentsAmount(){
-        summaryPaymentsAmount = calculatePaymentsSum(getPayments());
-    }
-
-    public void refreshDebt(){
-        refreshSummaryPaymentsAmount();
-        debt = getAmount() - summaryPaymentsAmount;
-    }
-
-    @Override
+   @Override
     public void validateForInsert(ValidationResult validationResult) {
-        getAmount();
-        getPayments();
-        if (true) {
-            validationResult.addFailure(new BeanValidationFailure(this, AMOUNT.getName(), "Incorect amount"));
+       int paymentsSum = 0;
+       List<Payment> payments = this.getPayments();
+
+       //counting sum of all payments of current invoice
+       for (int i = 0; i < payments.size(); i++) {
+           paymentsSum += payments.get(i).getAmount();
+       }
+
+       // checking if payments sum is greater than the invoice amount
+        if (paymentsSum > this.getAmount()) {
+            validationResult.addFailure(new BeanValidationFailure(this, AMOUNT.getName(), "Payments sum is greater than invoice amount"));
         }
+
         super.validateForInsert(validationResult);
 
     }
