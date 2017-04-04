@@ -62,8 +62,6 @@ public class InvoiceFunctionsTest {
         addPaymentsToInvoice(invoice, context, 249);
         context.commitChanges();
 
-            //how to check???
-
         Invoice expected = SelectById.query(Invoice.class, invoice.getObjectId()).selectOne(context);
         Assert.assertEquals(expected, invoice);
     }
