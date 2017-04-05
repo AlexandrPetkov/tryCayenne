@@ -1,28 +1,29 @@
 package ap.cayenne.learning.listener;
 
-import ap.cayenne.learning.listeners.OnSaveListener;
+import ap.cayenne.learning.listeners.MyLifecycleListener;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.query.ObjectSelect;
 import org.example.cayenne.persistent.Contact;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
-public class LifeCycleListener {
-    public static String message = null;
+public class MyLifecycleListenerTest {
     private ServerRuntime runtime;
     private ObjectContext context;
-    private OnSaveListener listener;
+    private MyLifecycleListener listener;
 
     @Before
     public void before(){
         runtime = ServerRuntime.builder().addConfig("cayenne-CayenneModelerTest.xml").build();
         context = runtime.newContext();
-        listener = new OnSaveListener();
+        listener = new MyLifecycleListener();
         runtime.getChannel().getEntityResolver().getCallbackRegistry().addListener(Contact.class, listener);
     }
 
+    @Ignore
     @Test
     public void TestLifeCycleListenerMethods(){
 
